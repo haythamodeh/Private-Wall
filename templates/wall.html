@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+
+    <title>Login-Registration</title>
+    <style>
+        body {
+            padding-bottom: 50px;
+        }
+        .header, .header-group {
+            display: inline-block;
+        }
+        .header {
+            vertical-align: -35%;
+        }
+        .header2 {
+            display:inline-block;
+            vertical-align: bottom;
+            padding-right: 10px;
+        }
+        .header-group {
+            float: right;
+        }
+        .jumbotron {
+            padding: 2rem 2rem;
+        }
+        .send-messages {
+            border-left: 2px solid black;
+        }
+        label{
+            vertical-align: top;
+            font-size: 20px;
+        }
+        .button {
+            vertical-align: top;
+        }
+        .content {
+            float: right;
+            margin: 15px 0;
+        }
+        .group {
+            display: inline-block;
+        }
+        .trash,i {
+            margin-top: 10px;
+            font-size: 30px;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <h4 class="header">CodingDojo Wall</h4>
+            <div class="header-group">
+                <h5 class="header2">Welcome {{session["name"]}}</h5>
+                <a href="/logout" class="btn btn-primary">Log Out</a>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="incoming-messages col-md-6">
+                <h5>Message(s) for You</h5>
+                {% with incomingmessages = get_flashed_messages(category_filter = ["incomingmessages"]) %}
+                    {% if incomingmessages %}
+                        {% for incomingmessage in incomingmessages %}
+                            <p class="text-success">{{ incomingmessage }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="container">
+                        <div class="group">
+                            <h6>{{message.sendername}} said ({{message["created_at"].strftime("%b/%d/%Y - %I:%M %S %p")}})</h6>
+                            <p>"{{message["message"]}}"</p>
+                        </div>
+                        <a href="/delete/{{ message['id']}}" class="trash"><i class="fa fa-trash"></i></a>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+            <div class="send-messages col-md-6">
+                <h5>Send Messages</h5>
+                {% with sentmessages = get_flashed_messages(category_filter = ["sentmessages"]) %}
+                    {% if sentmessages %}
+                        {% for sentmessage in sentmessages %}
+                            <p class="text-success">{{ sentmessage }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% for user in users: %}
+                <form action="/sendMessageProcess" method="POST">
+                    
+                        <div class="form-group">
+                            <div class="content">
+                                <label for="name" class="text-primary">{{ user["first_name"] }}</label>
+                                <input type="hidden" name="recepientid" value="{{ user['id'] }}">
+                                <textarea name="message"></textarea>
+                                <input type="submit" value="Send!" class="btn btn-success button">
+                            </div>
+                        </div>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
